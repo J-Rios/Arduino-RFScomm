@@ -1,0 +1,16 @@
+{
+	"name": "RFScomm",
+	"keywords": "rf, radio, wireless, aes, manchester, encode, encryption, 433MHz, 315MHz",
+	"description": "Arduino library for RF (315Mhz & 433MHz) communication with Manchester encoding and AES-256 secure encryption.",
+	"authors": {
+		"name": "JRios",
+		"url": "https://github.com/J-Rios"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/J-Rios/Arduino-RFScomm"
+	},	
+	"version": "1.0",
+	"frameworks": "arduino",
+	"platforms": ["atmelavr"]
+}

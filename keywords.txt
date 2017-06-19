@@ -1,0 +1,20 @@
+###########################################
+# Syntax Coloring Map For RFSComm
+###########################################
+
+###########################################
+# Datatypes (KEYWORD1)
+###########################################
+
+RFSCOMM	KEYWORD1
+
+###########################################
+# Methods and Functions (KEYWORD2)
+###########################################
+
+config KEYWORD2
+send KEYWORD2
+receive KEYWORD2
+rx_src_id KEYWORD2
+rx_dev_id KEYWORD2
+rx_cmd KEYWORD2
