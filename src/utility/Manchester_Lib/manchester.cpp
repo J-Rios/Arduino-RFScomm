@@ -24,7 +24,7 @@ This is required by the ASK RF link system to ensure its correct operation.
 The data rate is then 600 bits/s.
 */
 
-#include "Manchester.h"
+#include "manchester.h"
 
 static int8_t RxPin = 255;
 
