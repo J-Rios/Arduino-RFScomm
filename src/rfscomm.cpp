@@ -32,7 +32,7 @@ void RFSCOMM::config(uint8_t tx_pin, uint8_t rx_pin, uint8_t rf_bauds)
 
 void RFSCOMM::send(uint8_t dest_id, uint8_t data)
 {
-	uint8_t data_length = 1;
+    uint8_t data_length = 1;
 
     _tx_package[0] = _my_id;
     _tx_package[1] = dest_id;
@@ -45,13 +45,13 @@ void RFSCOMM::send(uint8_t dest_id, uint8_t data)
 
 void RFSCOMM::send(uint8_t dest_id, uint8_t cmd, uint8_t val)
 {
-	uint8_t data_length = 2;
+    uint8_t data_length = 2;
 
-	_tx_package[0] = _my_id;
+    _tx_package[0] = _my_id;
     _tx_package[1] = dest_id;
     _tx_package[2] = data_length;
     _tx_package[3] = cmd;
-	_tx_package[4] = val;
+    _tx_package[4] = val;
 
     aes256_enc(_tx_package, &_key_context);
     man.transmitArray(AES_BLOCK_SIZE, _tx_package);
@@ -59,23 +59,23 @@ void RFSCOMM::send(uint8_t dest_id, uint8_t cmd, uint8_t val)
 
 void RFSCOMM::send(uint8_t dest_id, uint8_t* data, uint8_t data_length)
 {
-	if(data_length != 0)
-	{
-		if(data_length > AES_BLOCK_SIZE-3)
-		{
-			data_length = AES_BLOCK_SIZE-3;
-			data[data_length-1] = '\0';
-		}
-		
-		_tx_package[0] = _my_id;
-		_tx_package[1] = dest_id;
-		_tx_package[2] = data_length;
-		for(int i = 3; i < data_length+3; i++)
-			_tx_package[i] = data[i-3];
+    if(data_length != 0)
+    {
+        if(data_length > AES_BLOCK_SIZE-3)
+        {
+            data_length = AES_BLOCK_SIZE-3;
+            data[data_length-1] = '\0';
+        }
 
-		aes256_enc(_tx_package, &_key_context);
-		man.transmitArray(AES_BLOCK_SIZE, _tx_package);
-	}
+        _tx_package[0] = _my_id;
+        _tx_package[1] = dest_id;
+        _tx_package[2] = data_length;
+        for(int i = 3; i < data_length+3; i++)
+            _tx_package[i] = data[i-3];
+
+        aes256_enc(_tx_package, &_key_context);
+        man.transmitArray(AES_BLOCK_SIZE, _tx_package);
+    }
 }
 
 /***************************************************************************************/
@@ -124,7 +124,7 @@ uint8_t RFSCOMM::rx_dev_id()
 
 uint8_t RFSCOMM::rx_data_length()
 {
-	return _data_length;
+    return _data_length;
 }
 
 uint8_t* RFSCOMM::rx_data()
