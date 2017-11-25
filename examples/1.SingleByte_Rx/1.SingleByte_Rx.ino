@@ -65,7 +65,7 @@ void loop()
             if(data_length == 1)
             {
                 Serial.print("Expected data from device [0x"); Serial.print(src_id, HEX); Serial.print("] has been received.\n");
-				Serial.print("Data received: 0x"); Serial.print(data[0], HEX); Serial.println();
+		Serial.print("Data received: 0x"); Serial.print(data[0], HEX); Serial.println();
             }
             else
                 Serial.print("Unexpected data received. More than one byte of data received.\n");
