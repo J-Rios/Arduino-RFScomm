@@ -1,17 +1,18 @@
 #include "rfscomm.h"
 
-/*******************************/
+/***************************************************************************************/
 
 RFSCOMM::RFSCOMM(uint8_t my_id)
 {
     _my_id = my_id;
     _src_id = 0;
     _dev_id = 0;
-    _cmd = 0;
+    _data_length = 0;
+    memset(_data, '\0', AES_BLOCK_SIZE-3);
     _waiting_rx = 1;
 }
 
-/*******************************/
+/***************************************************************************************/
 
 void RFSCOMM::config(uint8_t tx_pin, uint8_t rx_pin, uint8_t rf_bauds)
 {
@@ -27,18 +28,57 @@ void RFSCOMM::config(uint8_t tx_pin, uint8_t rx_pin, uint8_t rf_bauds)
         man.setup(tx_pin, rx_pin, rf_bauds);
 }
 
-/*******************************/
+/***************************************************************************************/
 
 void RFSCOMM::send(uint8_t dest_id, uint8_t data)
 {
+	uint8_t data_length = 1;
+
     _tx_package[0] = _my_id;
     _tx_package[1] = dest_id;
-    _tx_package[2] = data;
+    _tx_package[2] = data_length;
+    _tx_package[3] = data;
+
     aes256_enc(_tx_package, &_key_context);
     man.transmitArray(AES_BLOCK_SIZE, _tx_package);
 }
 
-/*******************************/
+void RFSCOMM::send(uint8_t dest_id, uint8_t cmd, uint8_t val)
+{
+	uint8_t data_length = 2;
+
+	_tx_package[0] = _my_id;
+    _tx_package[1] = dest_id;
+    _tx_package[2] = data_length;
+    _tx_package[3] = cmd;
+	_tx_package[4] = val;
+
+    aes256_enc(_tx_package, &_key_context);
+    man.transmitArray(AES_BLOCK_SIZE, _tx_package);
+}
+
+void RFSCOMM::send(uint8_t dest_id, uint8_t* data, uint8_t data_length)
+{
+	if(data_length != 0)
+	{
+		if(data_length > AES_BLOCK_SIZE-3)
+		{
+			data_length = AES_BLOCK_SIZE-3;
+			data[data_length-1] = '\0';
+		}
+		
+		_tx_package[0] = _my_id;
+		_tx_package[1] = dest_id;
+		_tx_package[2] = data_length;
+		for(int i = 3; i < data_length+3; i++)
+			_tx_package[i] = data[i-3];
+
+		aes256_enc(_tx_package, &_key_context);
+		man.transmitArray(AES_BLOCK_SIZE, _tx_package);
+	}
+}
+
+/***************************************************************************************/
 
 uint8_t RFSCOMM::receive()
 {
@@ -58,7 +98,9 @@ uint8_t RFSCOMM::receive()
             aes256_dec(_rx_package, &_key_context);
             _src_id = _rx_package[0];
             _dev_id = _rx_package[1];
-            _cmd = _rx_package[2];
+            _data_length = _rx_package[2];
+            for (int i = 0; i < _data_length; i++)
+            	_data[i] = _rx_package[i+3];
             man.beginReceiveArray(AES_BLOCK_SIZE, _rx_package);
             result = 1;
         }
@@ -67,6 +109,8 @@ uint8_t RFSCOMM::receive()
     
     return result;
 }
+
+/***************************************************************************************/
 
 uint8_t RFSCOMM::rx_src_id()
 {
@@ -78,7 +122,12 @@ uint8_t RFSCOMM::rx_dev_id()
     return _dev_id;
 }
 
-uint8_t RFSCOMM::rx_cmd()
+uint8_t RFSCOMM::rx_data_length()
 {
-    return _cmd;
+	return _data_length;
+}
+
+uint8_t* RFSCOMM::rx_data()
+{
+    return _data;
 }
